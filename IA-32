@@ -1,0 +1,42 @@
+#include "stdafx.h"
+#include <iostream>
+#include <stdio.h>
+
+using namespace std;
+
+int main(int argc, char** argv) {
+
+	if (argc < 2) {
+		cout << "Missing parameter\n";
+		return(0);
+
+	}
+	char* pcInp = argv[1];
+	int output = 0;
+	_asm {
+		
+		xor edx, edx
+		xor ecx, ecx
+		mov edx, 10
+		mov eax, pcInp
+		
+
+		ciklas:
+		mul edx
+		mov dl, byte ptr[eax]
+		cmp dl, 0
+		jz endciklas
+
+		sub dl, '0'
+		add ecx, ebx
+		inc eax
+		jmp ciklas
+
+		endciklas:
+		div edx
+		mov output, ecx
+		
+	}
+	printf("ats %d\n", output);
+
+}
