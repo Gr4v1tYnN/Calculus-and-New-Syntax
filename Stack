@@ -1,0 +1,153 @@
+#include "stdafx.h"
+#include <iostream>
+#include <fstream>
+
+#define MAX_SIZE 10
+
+using namespace std;
+
+ofstream rezultatai;
+
+class Queue {
+private:
+	int seka[MAX_SIZE];
+	int galas;
+	int priekis;
+public:
+	Queue();
+	void prideti(int);
+	int isimti();
+	int dydis();
+	void pirminis_rodymas();
+	void rezultatu_rodymas();
+	bool Tuscia();
+	bool Pilna();
+};
+Queue::Queue() {
+	galas = -1;
+	priekis = 0;
+}
+void Queue::prideti(int elementas) {
+	seka[++galas] = elementas;
+}
+int Queue::isimti() {
+	return seka[priekis++];
+}
+void Queue::pirminis_rodymas() {
+	cout << "Pradine eilute: " << endl;
+	rezultatai << "Pradine eilute: " << endl;
+	if (!this->Tuscia()) {
+		for (int i = priekis; i <= galas; i++) {
+			cout << seka[i] << " ";
+			rezultatai << seka[i] << " ";
+		}
+		rezultatai << endl;
+		cout << endl;
+	}
+	else {
+		cout << "Eilute tuscia" << endl;
+		rezultatai << "Eilute tuscia" << endl;
+		rezultatai << endl;
+	}
+}
+void Queue::rezultatu_rodymas() {
+	cout << "Eilute po pasikeitimu: " << endl;
+	rezultatai << "Eilute po pasikeitimu: " << endl;
+	if (!this->Tuscia()) {
+		for (int i = priekis; i <= galas; i++) {
+			cout << seka[i] << " ";
+			rezultatai << seka[i] << " ";
+		}
+		rezultatai << endl;
+		cout << endl;
+	}
+	else {
+		cout << "Eilute tuscia" << endl;
+		rezultatai << "Eilute tuscia" << endl;
+		rezultatai << endl;
+	}
+}
+int Queue::dydis() {
+	return (galas - priekis + 1);
+}
+bool Queue::Tuscia() {
+	if (priekis>galas) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+bool Queue::Pilna() {
+	if (this->dydis() >= MAX_SIZE) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+int main() {
+	Queue eilute;
+	int choice, elementas, poslinkis = 0;
+	ifstream duomenys;
+	duomenys.open("duom.txt", ios::out);
+	duomenys.seekg(0, ios::end); // ar nera atminties
+	poslinkis = duomenys.tellg(); // ar zymeklis nusikele per 0 poziciju
+	if (poslinkis != 0) {
+		duomenys.seekg(0); // jeigu zymeklio pozicija ne 0, zymeklis nukeliamas i prieki
+		if (duomenys.is_open()) {
+			while (!duomenys.eof() && !eilute.Pilna() && !duomenys.fail() && !duomenys.bad()) {
+				duomenys >> elementas;
+				eilute.prideti(elementas);
+			}
+			duomenys.close();
+		}
+	}
+	eilute.pirminis_rodymas();
+	rezultatai.open("rez.txt", ios::in);
+	while (1) {
+		cout << "\n1. Prideti nari\n2. Isimti nari\n3. Dydis\n4. Iseiti";
+		cout << "\nIveskite pasirinkima: ";
+		cin >> choice;
+		switch (choice) {
+		case 1:
+			if (rezultatai.good()) {
+				if (!eilute.Pilna()) {
+					cout << "\nIveskite skaiciu: ";
+					cin >> elementas;
+					eilute.prideti(elementas);
+					eilute.rezultatu_rodymas();
+				}
+				else {
+					cout << "Eilute pilna" << endl;
+					rezultatai << "Eilute pilna" << endl;
+				}
+			}
+			break;
+		case 2:
+			if (rezultatai.good()) {
+				if (!eilute.Tuscia()) {
+					cout << "Isememe nari" << " " << eilute.isimti() << endl;
+					eilute.rezultatu_rodymas();
+				}
+				else {
+					cout << "Eilute tuscia" << endl;
+					rezultatai << "Eilute tuscia" << endl;
+				}
+			}
+			break;
+		case 3:
+			if (rezultatai.good()) {
+				cout << "Eilutes dydis: " << eilute.dydis();
+				rezultatai << "Eilutes dydis: " << eilute.dydis();
+			}
+			break;
+		case 4:
+			exit(0);
+			break;
+		}
+	}
+	rezultatai.close();
+	return 0;
+}
